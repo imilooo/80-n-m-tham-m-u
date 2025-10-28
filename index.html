@@ -12,29 +12,37 @@
         body { margin: 0; padding: 0; background: #000; overflow: hidden; font-family: Arial; }
         
         #start-overlay {
-            position: fixed;
-            top: 0; left: 0;
+            position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
             background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
             z-index: 1001;
         }
         #start-button {
-            padding: 20px 40px;
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-            background-color: #007aff;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
+            padding: 20px 40px; font-size: 24px; font-weight: bold;
+            color: white; background-color: #007aff;
+            border: none; border-radius: 10px; cursor: pointer;
         }
         #instruction { 
             position: absolute; top: 0; left: 0; width: 100%; 
             text-align: center; color: white; background: rgba(0,0,0,0.8); 
             padding: 15px; z-index: 1000; display: none;
+        }
+
+        /* */
+        #unmute-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1002;
+            padding: 10px 15px;
+            font-size: 16px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* Ẩn ban đầu */
         }
     </style>
 </head>
@@ -43,10 +51,13 @@
         <button id="start-button">Bắt đầu AR</button>
     </div>
 
+    <button id="unmute-button">🔈 Bật tiếng</button>
+
     <div id="instruction">🎯 Hướng camera vào hình ảnh mục tiêu</div>
 
     <a-scene 
-        id="ar-scene" mindar-image="imageTargetSrc: targets.mind; autoStart: false; uiLoading: no; uiScanning: no; uiError: no;" 
+        id="ar-scene"
+        mindar-image="imageTargetSrc: targets.mind; autoStart: false; uiLoading: no; uiScanning: no; uiError: no;" 
         embedded 
         vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false"
@@ -84,7 +95,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const startButton = document.querySelector('#start-button');
             const startOverlay = document.querySelector('#start-overlay');
-            const sceneEl = document.querySelector('#ar-scene'); // Lấy a-scene bằng ID
+            const sceneEl = document.querySelector('#ar-scene'); 
             const instruction = document.querySelector('#instruction');
             const videos = [
                 document.querySelector('#vid1'),
@@ -93,13 +104,13 @@
                 document.querySelector('#vid4')
             ];
             const targets = document.querySelectorAll('.ar-target');
+            
+            // const unmuteButton = document.querySelector('#unmute-button');
+            let isMuted = true; // Biến để theo dõi trạng thái tiếng
 
-            // === THAY ĐỔI QUAN TRỌNG: ĐỢI A-SCENE TẢI XONG ===
-            // Gắn listener vào a-scene, đợi sự kiện 'loaded'
             sceneEl.addEventListener('loaded', function () {
                 
                 // --- 1. XỬ LÝ NÚT START ---
-                // Chỉ gắn sự kiện 'click' SAU KHI scene đã 'loaded'
                 startButton.addEventListener('click', () => {
                     // "Mở khóa" video
                     videos.forEach(video => {
@@ -110,36 +121,41 @@
                     });
 
                     // Bắt đầu hệ thống MindAR
-                    // Bây giờ sceneEl.systems['mindar-image-system'] chắc chắn đã tồn tại
                     sceneEl.systems['mindar-image-system'].start();
                     
                     // Ẩn nút start và hiện hướng dẫn
                     startOverlay.style.display = 'none';
                     instruction.style.display = 'block';
+                    
+                    // unmuteButton.style.display = 'block';
                 });
 
-                // --- 2. XỬ LÝ TÌM THẤY VIDEO ---
+                // --- 2. XỬ LÝ TÌM THẤY VIDEO (Giữ nguyên) ---
                 targets.forEach((target, index) => {
                     const video = videos[index]; 
-
                     target.addEventListener('targetFound', () => {
                         console.log(`🎯 Target ${index} found`);
-                        if (video) {
-                            video.play(); 
-                        }
+                        if (video) video.play(); 
                     });
-
                     target.addEventListener('targetLost', () => {
                         console.log(`❌ Target ${index} lost`);
-                        if (video) {
-                            video.pause();
-                            video.currentTime = 0;
-                        }
+                        if (video) { video.pause(); video.currentTime = 0; }
                     });
                 });
-            }); // Kết thúc của sceneEl.addEventListener('loaded', ...)
+                
+                // unmuteButton.addEventListener('click', () => {
+                    isMuted = !isMuted; // Đảo trạng thái
+                    videos.forEach(video => {
+                        video.muted = isMuted; // Áp dụng trạng thái mới cho TẤT CẢ video
+                    });
+                    
+                    // Đổi chữ trên nút
+                    unmuteButton.textContent = isMuted ? '🔈 Bật tiếng' : '🔊 Tắt tiếng';
+                });
+
+            }); 
             
-        }); // Kết thúc của document.addEventListener('DOMContentLoaded', ...)
+        }); 
     </script>
 </body>
 </html>

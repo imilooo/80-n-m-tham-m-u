@@ -5,53 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AR 80 Năm Truyền Thống Tham Mưu CAND</title>
     
-    <!-- THỨ TỰ ĐÚNG: A-Frame trước -->
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #000;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
-        #instruction {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            color: white;
-            background: rgba(0,0,0,0.8);
-            padding: 15px;
-            z-index: 1000;
-            font-size: 16px;
-        }
-        #loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            z-index: 999;
-            text-align: center;
-        }
+        body { margin: 0; padding: 0; background: #000; overflow: hidden; font-family: Arial; }
+        #instruction { position: absolute; top: 0; left: 0; width: 100%; text-align: center; color: white; background: rgba(0,0,0,0.8); padding: 15px; z-index: 1000; }
+        #startButton { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #007bff; color: white; border: none; padding: 15px 30px; font-size: 18px; border-radius: 10px; z-index: 1001; cursor: pointer; }
     </style>
 </head>
 <body>
-    <div id="instruction">
-        🎯 Hướng camera vào hình ảnh mục tiêu để xem video
-    </div>
+    <div id="instruction">🎯 Hướng camera vào hình ảnh mục tiêu để xem video</div>
+    <button id="startButton" onclick="startAR()">BẮT ĐẦU AR</button>
 
-    <div id="loading">
-        Đang tải AR...<br>
-        <small>Vui lòng cho phép sử dụng camera</small>
-    </div>
-
-    <div id="mindar-scene" style="width: 100%; height: 100vh;">
+    <div id="mindar-scene" style="width: 100%; height: 100vh; display: none;">
         <a-scene 
             mindar-image="imageTargetSrc: targets.mind; autoStart: true; uiLoading: no; uiScanning: no; uiError: no;" 
             embedded 
@@ -60,54 +28,58 @@
             
             <a-camera position="0 0 0"></a-camera>
 
-            <!-- TARGET 0 - target.jpg -->
-            <a-entity mindar-image-target="targetIndex: 0" class="target-entity">
+            <!-- TARGET 0 - target1.jpg -->
+            <a-entity mindar-image-target="targetIndex: 0">
                 <a-video 
                     src="#video1"
                     position="0 0 0"
                     width="1.6"
                     height="0.9"
-                    rotation="0 0 0">
+                    rotation="0 0 0"
+                    mindar-video-controls="targetIndex: 0">
                 </a-video>
             </a-entity>
 
             <!-- TARGET 1 - target2.jpg -->
-            <a-entity mindar-image-target="targetIndex: 1" class="target-entity">
+            <a-entity mindar-image-target="targetIndex: 1">
                 <a-video 
                     src="#video2"
                     position="0 0 0"
                     width="1.6"
                     height="0.9"
-                    rotation="0 0 0">
+                    rotation="0 0 0"
+                    mindar-video-controls="targetIndex: 1">
                 </a-video>
             </a-entity>
 
             <!-- TARGET 2 - target3.jpg -->
-            <a-entity mindar-image-target="targetIndex: 2" class="target-entity">
+            <a-entity mindar-image-target="targetIndex: 2">
                 <a-video 
                     src="#video3"
                     position="0 0 0"
                     width="1.6"
                     height="0.9"
-                    rotation="0 0 0">
+                    rotation="0 0 0"
+                    mindar-video-controls="targetIndex: 2">
                 </a-video>
             </a-entity>
 
             <!-- TARGET 3 - target4.jpg -->
-            <a-entity mindar-image-target="targetIndex: 3" class="target-entity">
+            <a-entity mindar-image-target="targetIndex: 3">
                 <a-video 
                     src="#video4"
                     position="0 0 0"
                     width="1.6"
                     height="0.9"
-                    rotation="0 0 0">
+                    rotation="0 0 0"
+                    mindar-video-controls="targetIndex: 3">
                 </a-video>
             </a-entity>
 
         </a-scene>
     </div>
 
-    <!-- VIDEO ELEMENTS VỚI MUTED & PLAYSINLINE -->
+    <!-- VIDEO ELEMENTS -->
     <video id="video1" loop playsinline muted preload="auto" crossorigin="anonymous" style="display: none;">
         <source src="assets/video1.mp4" type="video/mp4">
     </video>
@@ -122,38 +94,58 @@
     </video>
 
     <script>
+        function startAR() {
+            // Ẩn nút bấm, hiện AR scene
+            document.getElementById('startButton').style.display = 'none';
+            document.getElementById('mindar-scene').style.display = 'block';
+            
+            // Preload videos
+            const videos = ['video1', 'video2', 'video3', 'video4'];
+            videos.forEach(videoId => {
+                const video = document.getElementById(videoId);
+                video.load();
+            });
+            
+            console.log('🚀 AR Started!');
+        }
+
+        // Xử lý video khi target được tìm thấy
         document.addEventListener('DOMContentLoaded', function() {
             const scene = document.querySelector('a-scene');
-            const loading = document.getElementById('loading');
             
-            // Ẩn loading khi AR khởi động
-            scene.addEventListener('renderstart', function() {
-                loading.style.display = 'none';
-                console.log('✅ AR System started!');
-            });
+            if (scene) {
+                scene.addEventListener('renderstart', function() {
+                    console.log('✅ AR System ready!');
+                });
 
-            // Xử lý video khi tìm thấy target
-            const targetEntities = document.querySelectorAll('.target-entity');
-            
-            targetEntities.forEach((entity, index) => {
-                entity.addEventListener('targetFound', () => {
-                    console.log(`🎯 Target ${index} found`);
-                    const video = document.getElementById(`video${index + 1}`);
-                    if (video) {
-                        video.currentTime = 0;
-                        video.play().catch(e => {
-                            console.log(`Video ${index + 1} play error:`, e);
-                        });
-                    }
+                // Thêm event listener cho từng target
+                const targets = document.querySelectorAll('[mindar-image-target]');
+                targets.forEach((target, index) => {
+                    target.addEventListener('targetFound', (event) => {
+                        console.log(`🎯 Target ${index} found!`);
+                        const videoId = `video${index + 1}`;
+                        const video = document.getElementById(videoId);
+                        
+                        if (video) {
+                            video.currentTime = 0;
+                            video.play().then(() => {
+                                console.log(`✅ Video ${index + 1} playing`);
+                            }).catch(e => {
+                                console.log(`❌ Video ${index + 1} play failed:`, e);
+                            });
+                        }
+                    });
+
+                    target.addEventListener('targetLost', (event) => {
+                        const videoId = `video${index + 1}`;
+                        const video = document.getElementById(videoId);
+                        if (video) {
+                            video.pause();
+                            video.currentTime = 0;
+                        }
+                    });
                 });
-                
-                entity.addEventListener('targetLost', () => {
-                    const video = document.getElementById(`video${index + 1}`);
-                    if (video) {
-                        video.pause();
-                    }
-                });
-            });
+            }
         });
     </script>
 </body>

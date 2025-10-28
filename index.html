@@ -11,7 +11,6 @@
     <style>
         body { margin: 0; padding: 0; background: #000; overflow: hidden; font-family: Arial; }
         
-        /* CSS cho nút Start */
         #start-overlay {
             position: fixed;
             top: 0; left: 0;
@@ -20,7 +19,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1001; /* Phải cao hơn instruction */
+            z-index: 1001;
         }
         #start-button {
             padding: 20px 40px;
@@ -32,11 +31,10 @@
             border-radius: 10px;
             cursor: pointer;
         }
-
         #instruction { 
             position: absolute; top: 0; left: 0; width: 100%; 
             text-align: center; color: white; background: rgba(0,0,0,0.8); 
-            padding: 15px; z-index: 1000; display: none; /* Ẩn ban đầu */
+            padding: 15px; z-index: 1000; display: none;
         }
     </style>
 </head>
@@ -48,9 +46,7 @@
     <div id="instruction">🎯 Hướng camera vào hình ảnh mục tiêu</div>
 
     <a-scene 
-        mindar-image="imageTargetSrc: targets.mind; 
-                      autoStart: false; /* THAY ĐỔI QUAN TRỌNG: ĐỔI autoStart thành false */
-                      uiLoading: no; uiScanning: no; uiError: no;" 
+        mindar-image="imageTargetSrc: targets.mind; autoStart: false; uiLoading: no; uiScanning: no; uiError: no;" 
         embedded 
         vr-mode-ui="enabled: false"
         device-orientation-permission-ui="enabled: false"
@@ -68,15 +64,12 @@
         <a-entity mindar-image-target="targetIndex: 0" class="ar-target">
             <a-video src="#vid1" width="1" height="0.56" rotation="0 0 0"></a-video>
         </a-entity>
-
         <a-entity mindar-image-target="targetIndex: 1" class="ar-target">
             <a-video src="#vid2" width="1" height="0.56" rotation="0 0 0"></a-video>
         </a-entity>
-
         <a-entity mindar-image-target="targetIndex: 2" class="ar-target">
             <a-video src="#vid3" width="1" height="0.56" rotation="0 0 0"></a-video>
         </a-entity>
-
         <a-entity mindar-image-target="targetIndex: 3" class="ar-target">
             <a-video src="#vid4" width="1" height="0.56" rotation="0 0 0"></a-video>
         </a-entity>
@@ -89,9 +82,30 @@
             const startOverlay = document.querySelector('#start-overlay');
             const sceneEl = document.querySelector('a-scene');
             const instruction = document.querySelector('#instruction');
+            
+            // Lấy TẤT CẢ các video assets
+            const videos = [
+                document.querySelector('#vid1'),
+                document.querySelector('#vid2'),
+                document.querySelector('#vid3'),
+                document.querySelector('#vid4')
+            ];
 
             // --- 1. XỬ LÝ NÚT START ---
             startButton.addEventListener('click', () => {
+                
+                // === THAY ĐỔI QUAN TRỌNG: "MỞ KHÓA" VIDEO ===
+                // Chạy và dừng tất cả video ngay lập tức
+                // Hành động này liên kết cú click của người dùng với các video
+                // Giúp trình duyệt cho phép play() sau này
+                videos.forEach(video => {
+                    if (video) {
+                        video.play();
+                        video.pause();
+                    }
+                });
+                // ==========================================
+
                 // Bắt đầu hệ thống MindAR
                 sceneEl.systems['mindar-image-system'].start();
                 
@@ -101,22 +115,15 @@
             });
 
             // --- 2. XỬ LÝ TÌM THẤY VIDEO (giữ nguyên như cũ) ---
-            const videos = [
-                document.querySelector('#vid1'),
-                document.querySelector('#vid2'),
-                document.querySelector('#vid3'),
-                document.querySelector('#vid4')
-            ];
-
             const targets = document.querySelectorAll('.ar-target');
 
             targets.forEach((target, index) => {
-                const video = videos[index];
+                const video = videos[index]; // Lấy video tương ứng
 
                 target.addEventListener('targetFound', () => {
                     console.log(`🎯 Target ${index} found`);
                     if (video) {
-                        video.play();
+                        video.play(); // Lần này lệnh play() sẽ hoạt động
                     }
                 });
 

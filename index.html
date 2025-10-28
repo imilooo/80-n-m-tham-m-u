@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR 80 Năm CAND</title>
+    <title>AR 80 Năm Truyền Thống Tham Mưu CAND</title>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image.prod.js"></script>
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image-aframe.prod.js"></script>
@@ -17,15 +17,15 @@
         }
         #instruction {
             position: absolute;
-            top: 20px;
+            top: 0;
             left: 0;
             width: 100%;
             text-align: center;
             color: white;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             padding: 15px;
             z-index: 1000;
-            font-size: 18px;
+            font-size: 16px;
         }
         #loading {
             position: absolute;
@@ -33,8 +33,9 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: white;
-            font-size: 20px;
+            font-size: 18px;
             z-index: 999;
+            text-align: center;
         }
     </style>
 </head>
@@ -43,11 +44,14 @@
         🎯 Hướng camera vào hình ảnh mục tiêu để xem video AR
     </div>
     
-    <div id="loading">🔄 Đang tải AR...</div>
+    <div id="loading">
+        🔄 Đang tải AR...<br>
+        <small>Vui lòng cho phép sử dụng camera</small>
+    </div>
 
     <div id="mindar-scene" style="width: 100%; height: 100vh;">
         <a-scene 
-            mindar-image="imageTargetSrc: targets.mind; autoStart: true; maxTrack: 2; uiLoading: no; uiScanning: no; uiError: no;" 
+            mindar-image="imageTargetSrc: targets.mind; autoStart: true; maxTrack: 4; uiLoading: no; uiScanning: no; uiError: no;" 
             embedded 
             vr-mode-ui="enabled: false"
             device-orientation-permission-ui="enabled: false"
@@ -55,11 +59,11 @@
             
             <a-camera position="0 0 0" active="false"></a-camera>
 
-            <!-- TARGET 0 -->
+            <!-- TARGET 0 - target.jpg → Video 1 -->
             <a-entity mindar-image-target="targetIndex: 0">
                 <a-video 
                     src="#video1"
-                    position="0 0 0.1"
+                    position="0 0 0"
                     width="1.6"
                     height="0.9"
                     rotation="0 0 0"
@@ -67,15 +71,39 @@
                 </a-video>
             </a-entity>
 
-            <!-- TARGET 1 -->
+            <!-- TARGET 1 - target2.jpg → Video 2 -->
             <a-entity mindar-image-target="targetIndex: 1">
                 <a-video 
                     src="#video2"
-                    position="0 0 0.1"
+                    position="0 0 0"
                     width="1.6"
                     height="0.9"
                     rotation="0 0 0"
                     mindar-video-controls="targetIndex: 1">
+                </a-video>
+            </a-entity>
+
+            <!-- TARGET 2 - target3.jpg → Video 3 -->
+            <a-entity mindar-image-target="targetIndex: 2">
+                <a-video 
+                    src="#video3"
+                    position="0 0 0"
+                    width="1.6"
+                    height="0.9"
+                    rotation="0 0 0"
+                    mindar-video-controls="targetIndex: 2">
+                </a-video>
+            </a-entity>
+
+            <!-- TARGET 3 - target4.jpg → Video 4 -->
+            <a-entity mindar-image-target="targetIndex: 3">
+                <a-video 
+                    src="#video4"
+                    position="0 0 0"
+                    width="1.6"
+                    height="0.9"
+                    rotation="0 0 0"
+                    mindar-video-controls="targetIndex: 3">
                 </a-video>
             </a-entity>
 
@@ -84,10 +112,16 @@
 
     <!-- VIDEO SOURCES -->
     <video id="video1" loop preload="auto" crossorigin="anonymous" style="display: none;">
-        <source src="assets/video1.mp4" type="video/mp4">
+        <source src="https://drive.google.com/uc?export=download&id=1oAKZk2L87Qs4tIFrrJn4SigJzSx6-7-N" type="video/mp4">
     </video>
     <video id="video2" loop preload="auto" crossorigin="anonymous" style="display: none;">
-        <source src="assets/video2.mp4" type="video/mp4">
+        <source src="https://drive.google.com/uc?export=download&id=1rH9v0i99qLZe32bWWVhf6D3zjragdy57" type="video/mp4">
+    </video>
+    <video id="video3" loop preload="auto" crossorigin="anonymous" style="display: none;">
+        <source src="https://drive.google.com/uc?export=download&id=1x5yeo24GYtWK_Uy3JMtEQh1HqRl9plby" type="video/mp4">
+    </video>
+    <video id="video4" loop preload="auto" crossorigin="anonymous" style="display: none;">
+        <source src="https://drive.google.com/uc?export=download&id=1KBBtiF9xc35l5s1v_9nB4eqa3snf102X" type="video/mp4">
     </video>
 
     <script>

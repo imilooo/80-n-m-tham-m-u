@@ -4,27 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AR 80 Năm Truyền Thống Tham Mưu CAND</title>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image.prod.js"></script>
+    
+    <!-- THỨ TỰ ĐÚNG: A-Frame trước, MindAR sau -->
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image-aframe.prod.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            overflow: hidden;
+        }
+        #instruction {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            z-index: 1000;
+        }
+    </style>
 </head>
 <body>
-    <div style="position: absolute; top: 10px; left: 10px; color: white; z-index: 999; background: rgba(0,0,0,0.7); padding: 10px;">
-        Hướng camera vào hình ảnh mục tiêu
+    <div id="instruction">
+        🎯 Hướng camera vào hình ảnh mục tiêu
     </div>
 
     <div id="mindar-scene" style="width: 100%; height: 100vh;">
         <a-scene 
             mindar-image="imageTargetSrc: targets.mind; autoStart: true; uiLoading: no; uiScanning: no; uiError: no;" 
             embedded 
-            vr-mode-ui="enabled: false">
+            vr-mode-ui="enabled: false"
+            device-orientation-permission-ui="enabled: false">
             
-            <a-camera active="false"></a-camera>
+            <!-- CAMERA ĐÚNG -->
+            <a-camera position="0 0 0"></a-camera>
 
-            <!-- Target 0 -->
-            <a-entity mindar-image-target="targetIndex: 0">
+            <!-- TARGET 0 -->
+            <a-entity mindar-image-target="targetIndex: 0" class="target-entity">
                 <a-video 
-                    src="https://drive.google.com/file/d/1oAKZk2L87Qs4tIFrrJn4SigJzSx6-7-N/preview"
+                    src="#video1"
                     position="0 0 0"
                     width="1.6"
                     height="0.9"
@@ -32,10 +56,10 @@
                 </a-video>
             </a-entity>
 
-            <!-- Target 1 -->
-            <a-entity mindar-image-target="targetIndex: 1">
+            <!-- TARGET 1 -->
+            <a-entity mindar-image-target="targetIndex: 1" class="target-entity">
                 <a-video 
-                    src="https://drive.google.com/file/d/1rH9v0i99qLZe32bWWVhf6D3zjragdy57/preview"
+                    src="#video2"
                     position="0 0 0"
                     width="1.6"
                     height="0.9"
@@ -43,10 +67,10 @@
                 </a-video>
             </a-entity>
 
-            <!-- Target 2 -->
-            <a-entity mindar-image-target="targetIndex: 2">
+            <!-- TARGET 2 -->
+            <a-entity mindar-image-target="targetIndex: 2" class="target-entity">
                 <a-video 
-                    src="https://drive.google.com/file/d/1x5yeo24GYtWK_Uy3JMtEQh1HqRl9plby/preview"
+                    src="#video3"
                     position="0 0 0"
                     width="1.6"
                     height="0.9"
@@ -54,10 +78,10 @@
                 </a-video>
             </a-entity>
 
-            <!-- Target 3 -->
-            <a-entity mindar-image-target="targetIndex: 3">
+            <!-- TARGET 3 -->
+            <a-entity mindar-image-target="targetIndex: 3" class="target-entity">
                 <a-video 
-                    src="https://drive.google.com/file/d/1KBBtiF9xc35l5s1v_9nB4eqa3snf102X/preview"
+                    src="#video4"
                     position="0 0 0"
                     width="1.6"
                     height="0.9"
@@ -68,29 +92,41 @@
         </a-scene>
     </div>
 
+    <!-- VIDEO ELEMENTS VỚI MUTED & PLAYSINLINE -->
+    <video id="video1" loop playsinline muted preload="auto" style="display: none;">
+        <source src="assets/video1.mp4" type="video/mp4">
+    </video>
+    <video id="video2" loop playsinline muted preload="auto" style="display: none;">
+        <source src="assets/video2.mp4" type="video/mp4">
+    </video>
+    <video id="video3" loop playsinline muted preload="auto" style="display: none;">
+        <source src="assets/video3.mp4" type="video/mp4">
+    </video>
+    <video id="video4" loop playsinline muted preload="auto" style="display: none;">
+        <source src="assets/video4.mp4" type="video/mp4">
+    </video>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const scene = document.querySelector('a-scene');
+            // LẮNG NGHE SỰ KIỆN TRÊN TỪNG TARGET
+            const targetEntities = document.querySelectorAll('.target-entity');
             
-            scene.addEventListener('targetFound', function(event) {
-                console.log('🎯 Target found!');
-                const video = event.target.querySelector('video');
-                if (video) {
-                    // Thử phát video khi tìm thấy target
-                    video.play().catch(e => {
-                        console.log('Video play failed, trying to load first:', e);
-                        video.load();
-                        setTimeout(() => video.play(), 1000);
-                    });
-                }
-            });
-
-            scene.addEventListener('targetLost', function(event) {
-                const video = event.target.querySelector('video');
-                if (video) {
-                    video.pause();
-                    video.currentTime = 0;
-                }
+            targetEntities.forEach(entity => {
+                entity.addEventListener('targetFound', () => {
+                    console.log('🎯 Target found');
+                    const video = entity.querySelector('video');
+                    if (video) {
+                        video.play().catch(e => console.log('Play error:', e));
+                    }
+                });
+                
+                entity.addEventListener('targetLost', () => {
+                    const video = entity.querySelector('video');
+                    if (video) {
+                        video.pause();
+                        video.currentTime = 0;
+                    }
+                });
             });
         });
     </script>

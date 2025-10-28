@@ -92,6 +92,7 @@
     </a-scene>
 
     <script>
+       <script>
         document.addEventListener('DOMContentLoaded', function() {
             const startButton = document.querySelector('#start-button');
             const startOverlay = document.querySelector('#start-overlay');
@@ -105,9 +106,11 @@
             ];
             const targets = document.querySelectorAll('.ar-target');
             
-            // const unmuteButton = document.querySelector('#unmute-button');
+            // Lấy nút Bật tiếng
+            const unmuteButton = document.querySelector('#unmute-button');
             let isMuted = true; // Biến để theo dõi trạng thái tiếng
 
+            // ĐỢI A-SCENE TẢI XONG
             sceneEl.addEventListener('loaded', function () {
                 
                 // --- 1. XỬ LÝ NÚT START ---
@@ -127,10 +130,11 @@
                     startOverlay.style.display = 'none';
                     instruction.style.display = 'block';
                     
-                    // unmuteButton.style.display = 'block';
+                    // Hiện nút bật tiếng
+                    unmuteButton.style.display = 'block';
                 });
 
-                // --- 2. XỬ LÝ TÌM THẤY VIDEO (Giữ nguyên) ---
+                // --- 2. XỬ LÝ TÌM THẤY VIDEO ---
                 targets.forEach((target, index) => {
                     const video = videos[index]; 
                     target.addEventListener('targetFound', () => {
@@ -143,7 +147,8 @@
                     });
                 });
                 
-                // unmuteButton.addEventListener('click', () => {
+                // --- 3. XỬ LÝ NÚT BẬT TIẾNG ---
+                unmuteButton.addEventListener('click', () => {
                     isMuted = !isMuted; // Đảo trạng thái
                     videos.forEach(video => {
                         video.muted = isMuted; // Áp dụng trạng thái mới cho TẤT CẢ video
@@ -153,9 +158,10 @@
                     unmuteButton.textContent = isMuted ? '🔈 Bật tiếng' : '🔊 Tắt tiếng';
                 });
 
-            }); 
+            }); // <-- Dấu } này đóng 'sceneEl.addEventListener'
             
-        }); 
+        }); // <-- Dấu } này đóng 'document.addEventListener' (Lỗi của bạn có thể là ở đây)
     </script>
 </body>
 </html>
+

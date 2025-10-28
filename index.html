@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR 80 Năm CAND</title>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image.prod.js"></script>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image-aframe.prod.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #000;
+            overflow: hidden;
+        }
+        #instruction {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            z-index: 1000;
+            font-size: 18px;
+        }
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 20px;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div id="instruction">
+        🎯 Hướng camera vào hình ảnh mục tiêu để xem video AR
+    </div>
+    
+    <div id="loading">🔄 Đang tải AR...</div>
+
+    <div id="mindar-scene" style="width: 100%; height: 100vh;">
+        <a-scene 
+            mindar-image="imageTargetSrc: targets.mind; autoStart: true; maxTrack: 2; uiLoading: no; uiScanning: no; uiError: no;" 
+            embedded 
+            vr-mode-ui="enabled: false"
+            device-orientation-permission-ui="enabled: false"
+            renderer="colorManagement: true">
+            
+            <a-camera position="0 0 0" active="false"></a-camera>
+
+            <!-- TARGET 0 -->
+            <a-entity mindar-image-target="targetIndex: 0">
+                <a-video 
+                    src="#video1"
+                    position="0 0 0.1"
+                    width="1.6"
+                    height="0.9"
+                    rotation="0 0 0"
+                    mindar-video-controls="targetIndex: 0">
+                </a-video>
+            </a-entity>
+
+            <!-- TARGET 1 -->
+            <a-entity mindar-image-target="targetIndex: 1">
+                <a-video 
+                    src="#video2"
+                    position="0 0 0.1"
+                    width="1.6"
+                    height="0.9"
+                    rotation="0 0 0"
+                    mindar-video-controls="targetIndex: 1">
+                </a-video>
+            </a-entity>
+
+        </a-scene>
+    </div>
+
+    <!-- VIDEO SOURCES -->
+    <video id="video1" loop preload="auto" crossorigin="anonymous" style="display: none;">
+        <source src="assets/video1.mp4" type="video/mp4">
+    </video>
+    <video id="video2" loop preload="auto" crossorigin="anonymous" style="display: none;">
+        <source src="assets/video2.mp4" type="video/mp4">
+    </video>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const scene = document.querySelector('a-scene');
+            const loading = document.getElementById('loading');
+            
+            scene.addEventListener('renderstart', function() {
+                loading.style.display = 'none';
+                console.log('✅ AR System đã khởi động!');
+            });
+
+            scene.addEventListener('targetFound', function(event) {
+                console.log('🎯 Tìm thấy target:', event.target);
+            });
+        });
+    </script>
+</body>
+</html>

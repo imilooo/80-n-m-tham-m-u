@@ -12,38 +12,42 @@
     <style>
         body { margin: 0; padding: 0; background: #000; overflow: hidden; font-family: Arial; }
         #instruction { position: absolute; top: 0; left: 0; width: 100%; text-align: center; color: white; background: rgba(0,0,0,0.8); padding: 15px; z-index: 1000; }
-        #debug { position: absolute; bottom: 10px; left: 10px; color: white; background: rgba(0,0,0,0.7); padding: 10px; z-index: 1001; font-size: 12px; }
     </style>
 </head>
 <body>
-    <div id="instruction">🎯 Hướng camera vào hình ảnh mục tiêu để xem video</div>
-    <div id="debug">Đang khởi tạo...</div>
+    <div id="instruction">🎯 Hướng camera vào hình ảnh mục tiêu</div>
 
     <div id="mindar-scene" style="width: 100%; height: 100vh;">
         <a-scene 
             mindar-image="imageTargetSrc: targets.mind; autoStart: true; uiLoading: no; uiScanning: no; uiError: no;" 
             embedded 
             vr-mode-ui="enabled: false"
-            device-orientation-permission-ui="enabled: false"
-            debug>
+            device-orientation-permission-ui="enabled: false">
             
-            <a-camera position="0 0 0" debug></a-camera>
+            <a-camera position="0 0 0"></a-camera>
 
-            <!-- TEST VỚI HỘP MÀU ĐỎ TRƯỚC -->
+            <!-- TARGET 1 - HỘP MÀU -->
             <a-entity mindar-image-target="targetIndex: 0">
-                <a-box color="red" position="0 0 0" width="0.5" height="0.5" depth="0.5"></a-box>
+                <a-box color="red" position="0 0.5 0" width="0.3" height="0.3" depth="0.3"></a-box>
+                <a-text value="VIDEO 1" position="0 1 0" color="white" align="center"></a-text>
             </a-entity>
 
-            <!-- TARGET 1 - THỬ VIDEO -->
+            <!-- TARGET 2 - HỘP MÀU -->
             <a-entity mindar-image-target="targetIndex: 1">
-                <a-video 
-                    src="assets/video2.mp4"
-                    position="0 0 0"
-                    width="1.6"
-                    height="0.9"
-                    rotation="0 0 0"
-                    debug>
-                </a-video>
+                <a-box color="blue" position="0 0.5 0" width="0.3" height="0.3" depth="0.3"></a-box>
+                <a-text value="VIDEO 2" position="0 1 0" color="white" align="center"></a-text>
+            </a-entity>
+
+            <!-- TARGET 3 - HỘP MÀU -->
+            <a-entity mindar-image-target="targetIndex: 2">
+                <a-box color="green" position="0 0.5 0" width="0.3" height="0.3" depth="0.3"></a-box>
+                <a-text value="VIDEO 3" position="0 1 0" color="white" align="center"></a-text>
+            </a-entity>
+
+            <!-- TARGET 4 - HỘP MÀU -->
+            <a-entity mindar-image-target="targetIndex: 3">
+                <a-box color="yellow" position="0 0.5 0" width="0.3" height="0.3" depth="0.3"></a-box>
+                <a-text value="VIDEO 4" position="0 1 0" color="white" align="center"></a-text>
             </a-entity>
 
         </a-scene>
@@ -51,34 +55,30 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const debug = document.getElementById('debug');
             const scene = document.querySelector('a-scene');
             
-            // Test video load
-            const testVideo = document.createElement('video');
-            testVideo.src = 'assets/video2.mp4';
-            testVideo.addEventListener('loadeddata', () => {
-                debug.innerHTML += '<br>✅ Video load được';
-            });
-            testVideo.addEventListener('error', () => {
-                debug.innerHTML += '<br>❌ Video KHÔNG load được';
-            });
-            testVideo.load();
-
-            // AR events
-            scene.addEventListener('renderstart', () => {
-                debug.innerHTML += '<br>✅ AR đã khởi động';
+            scene.addEventListener('renderstart', function() {
+                console.log('✅ AR System ready!');
             });
 
+            // Thêm click để mở video
             const targets = document.querySelectorAll('[mindar-image-target]');
             targets.forEach((target, index) => {
                 target.addEventListener('targetFound', () => {
-                    debug.innerHTML += `<br>🎯 Target ${index} được nhận diện`;
-                    console.log(`Target ${index} found:`, target.querySelector('a-video, a-box'));
-                });
-                
-                target.addEventListener('targetLost', () => {
-                    debug.innerHTML += `<br>📭 Target ${index} mất`;
+                    console.log(`🎯 Target ${index} found`);
+                    
+                    // Tạo popup thông báo
+                    const videoLinks = [
+                        'https://imilooo.github.io/80-n-m-tham-m-u/assets/video1.mp4',
+                        'https://imilooo.github.io/80-n-m-tham-m-u/assets/video2.mp4', 
+                        'https://imilooo.github.io/80-n-m-tham-m-u/assets/video3.mp4',
+                        'https://imilooo.github.io/80-n-m-tham-m-u/assets/video4.mp4'
+                    ];
+                    
+                    // Mở video trong tab mới khi chạm
+                    target.addEventListener('click', () => {
+                        window.open(videoLinks[index], '_blank');
+                    });
                 });
             });
         });

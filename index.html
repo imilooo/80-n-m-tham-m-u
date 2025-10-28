@@ -1,134 +1,97 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR 80 Năm Truyền Thống Tham Mưu CAND</title>
-    
-    <!-- THỨ TỰ ĐÚNG: A-Frame trước, MindAR sau -->
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image.prod.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image-aframe.prod.js"></script>
-    
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: #000;
-            overflow: hidden;
-        }
-        #instruction {
-            position: absolute;
-            top: 10px;
-            left: 0;
-            width: 100%;
-            text-align: center;
-            color: white;
-            background: rgba(0,0,0,0.7);
-            padding: 10px;
-            z-index: 1000;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AR 80 Năm Truyền Thống Tham Mưu CAND</title>
+
+  <!-- Load order: A-Frame first, then MindAR scripts -->
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.3/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    body { margin: 0; overflow: hidden; background: #000; }
+    .hint {
+      position: absolute; top: 10px; left: 10px; color: white; z-index: 999;
+      background: rgba(0,0,0,0.7); padding: 10px; font-family: sans-serif;
+    }
+  </style>
 </head>
 <body>
-    <div id="instruction">
-        🎯 Hướng camera vào hình ảnh mục tiêu
-    </div>
+  <div class="hint">Hướng camera vào hình ảnh mục tiêu</div>
 
-    <div id="mindar-scene" style="width: 100%; height: 100vh;">
-        <a-scene 
-            mindar-image="imageTargetSrc: targets.mind; autoStart: true; uiLoading: no; uiScanning: no; uiError: no;" 
-            embedded 
-            vr-mode-ui="enabled: false"
-            device-orientation-permission-ui="enabled: false">
-            
-            <!-- CAMERA ĐÚNG -->
-            <a-camera position="0 0 0"></a-camera>
+  <!-- Pre-declare video elements (use direct mp4 URLs that return raw file; replace placeholders) -->
+  <video id="video0" playsinline webkit-playsinline muted preload="auto" loop crossorigin="anonymous">
+    <source src="https://your-host.example/video0.mp4" type="video/mp4" />
+  </video>
+  <video id="video1" playsinline webkit-playsinline muted preload="auto" loop crossorigin="anonymous">
+    <source src="https://your-host.example/video1.mp4" type="video/mp4" />
+  </video>
+  <video id="video2" playsinline webkit-playsinline muted preload="auto" loop crossorigin="anonymous">
+    <source src="https://your-host.example/video2.mp4" type="video/mp4" />
+  </video>
+  <video id="video3" playsinline webkit-playsinline muted preload="auto" loop crossorigin="anonymous">
+    <source src="https://your-host.example/video3.mp4" type="video/mp4" />
+  </video>
 
-            <!-- TARGET 0 -->
-            <a-entity mindar-image-target="targetIndex: 0" class="target-entity">
-                <a-video 
-                    src="#video1"
-                    position="0 0 0"
-                    width="1.6"
-                    height="0.9"
-                    rotation="0 0 0">
-                </a-video>
-            </a-entity>
+  <div id="mindar-scene" style="width:100%; height:100vh;">
+    <a-scene
+      mindar-image="imageTargetSrc: targets.mind; autoStart: true; uiLoading: no; uiScanning: no; uiError: no;"
+      embedded
+      vr-mode-ui="enabled: false">
 
-            <!-- TARGET 1 -->
-            <a-entity mindar-image-target="targetIndex: 1" class="target-entity">
-                <a-video 
-                    src="#video2"
-                    position="0 0 0"
-                    width="1.6"
-                    height="0.9"
-                    rotation="0 0 0">
-                </a-video>
-            </a-entity>
+      <a-camera position="0 0 0"></a-camera>
 
-            <!-- TARGET 2 -->
-            <a-entity mindar-image-target="targetIndex: 2" class="target-entity">
-                <a-video 
-                    src="#video3"
-                    position="0 0 0"
-                    width="1.6"
-                    height="0.9"
-                    rotation="0 0 0">
-                </a-video>
-            </a-entity>
+      <!-- Target 0 -->
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-video src="#video0" position="0 0 0" width="1.6" height="0.9" rotation="0 0 0"></a-video>
+      </a-entity>
 
-            <!-- TARGET 3 -->
-            <a-entity mindar-image-target="targetIndex: 3" class="target-entity">
-                <a-video 
-                    src="#video4"
-                    position="0 0 0"
-                    width="1.6"
-                    height="0.9"
-                    rotation="0 0 0">
-                </a-video>
-            </a-entity>
+      <!-- Target 1 -->
+      <a-entity mindar-image-target="targetIndex: 1">
+        <a-video src="#video1" position="0 0 0" width="1.6" height="0.9" rotation="0 0 0"></a-video>
+      </a-entity>
 
-        </a-scene>
-    </div>
+      <!-- Target 2 -->
+      <a-entity mindar-image-target="targetIndex: 2">
+        <a-video src="#video2" position="0 0 0" width="1.6" height="0.9" rotation="0 0 0"></a-video>
+      </a-entity>
 
-    <!-- VIDEO ELEMENTS VỚI MUTED & PLAYSINLINE -->
-    <video id="video1" loop playsinline muted preload="auto" style="display: none;">
-        <source src="assets/video1.mp4" type="video/mp4">
-    </video>
-    <video id="video2" loop playsinline muted preload="auto" style="display: none;">
-        <source src="assets/video2.mp4" type="video/mp4">
-    </video>
-    <video id="video3" loop playsinline muted preload="auto" style="display: none;">
-        <source src="assets/video3.mp4" type="video/mp4">
-    </video>
-    <video id="video4" loop playsinline muted preload="auto" style="display: none;">
-        <source src="assets/video4.mp4" type="video/mp4">
-    </video>
+      <!-- Target 3 -->
+      <a-entity mindar-image-target="targetIndex: 3">
+        <a-video src="#video3" position="0 0 0" width="1.6" height="0.9" rotation="0 0 0"></a-video>
+      </a-entity>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // LẮNG NGHE SỰ KIỆN TRÊN TỪNG TARGET
-            const targetEntities = document.querySelectorAll('.target-entity');
-            
-            targetEntities.forEach(entity => {
-                entity.addEventListener('targetFound', () => {
-                    console.log('🎯 Target found');
-                    const video = entity.querySelector('video');
-                    if (video) {
-                        video.play().catch(e => console.log('Play error:', e));
-                    }
-                });
-                
-                entity.addEventListener('targetLost', () => {
-                    const video = entity.querySelector('video');
-                    if (video) {
-                        video.pause();
-                        video.currentTime = 0;
-                    }
-                });
-            });
+    </a-scene>
+  </div>
+
+  <script>
+    // Attach listeners per target entity (reliable)
+    document.addEventListener('DOMContentLoaded', () => {
+      const targets = document.querySelectorAll('[mindar-image-target]');
+
+      targets.forEach((el, idx) => {
+        // reference to the corresponding HTMLVideoElement declared above
+        const videoEl = document.getElementById(`video${idx}`);
+        if (!videoEl) return;
+
+        el.addEventListener('targetFound', () => {
+          // try to play (muted + playsinline increases chance to autoplay)
+          videoEl.play().catch((e) => {
+            console.warn('play() failed:', e);
+            // As fallback, load then try again shortly
+            videoEl.load();
+            setTimeout(() => videoEl.play().catch(err => console.warn('retry play failed', err)), 500);
+          });
         });
-    </script>
+
+        el.addEventListener('targetLost', () => {
+          videoEl.pause();
+          videoEl.currentTime = 0;
+        });
+      });
+    });
+  </script>
 </body>
 </html>
